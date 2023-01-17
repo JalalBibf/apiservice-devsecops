@@ -43,10 +43,10 @@ jobs:
       
       - name: upload war file to artifact
         uses: actions/checkout@v2 
-        uses: actions/upload-artifact@v2
-        with:
-          name: warfile
-          path: target/*.war
+        -uses: actions/upload-artifact@v2
+          with:
+            name: warfile
+            path: target/*.war
 
   deploy-to-server:
     name: Deploy application to server
