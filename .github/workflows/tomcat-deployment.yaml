@@ -40,6 +40,14 @@ jobs:
 
       # - name: Rename file with action number
       #   run: mv target/*.war target/b${{github.run_number}}.war
+      
+      - name: upload war file to artifact
+        uses: actions/checkout@v2 
+        uses: actions/upload-artifact@v2
+        with:
+          name: warfile
+          path: target/*.war
+
   deploy-to-server:
     name: Deploy application to server
     runs-on: ubuntu-latest
@@ -47,8 +55,12 @@ jobs:
     steps:
       - name: Deploy the Build to Tomcat
         uses: mdallasanta/ssh-scp-deploy@v1.2.0
+        uses: actions/checkout@v2
+        uses: actions/download-artifact@v2
+          with:
+            name: warfile
         with:
-          local: './target/*.war'                                            
+          local: '*.war'                                            
           remote: 'C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps\'                                               
           host: ${{secrets.HOST}}                                  
           port: ${{secrets.PORT}}
