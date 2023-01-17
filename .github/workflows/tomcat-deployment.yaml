@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  WAR_FILE_NAME: b${{github.run_number}}
+  war_file_name: b${{github.run_number}}
 
 jobs:
   build-springboot-app:
@@ -30,7 +30,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: Replace version name
-        run: sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{ WAR_FILE_NAME }}/g' pom.xml
+        run: sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{ war_file_name }}/g' pom.xml
 
       - name: Build the Code
         run: ./mvnw package
@@ -39,12 +39,12 @@ jobs:
         run: ls -l target/*.war
 
       - name: Rename file with action number
-        run: mv target/*.war target/${{ WAR_FILE_NAME }}.war
+        run: mv target/*.war target/${{ war_file_name }}.war
 
       - name: Deploy the Build to Tomcat
         uses: mdallasanta/ssh-scp-deploy@v1.2.0
         with:
-          local: './target/${{ WAR_FILE_NAME }}.war'                                                 
+          local: './target/${{ war_file_name }}.war'                                                 
           remote: 'C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps\'                                               
           host: ${{secrets.HOST}}                                  
           port: ${{secrets.PORT}}
