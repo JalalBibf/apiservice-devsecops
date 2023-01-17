@@ -29,8 +29,8 @@ jobs:
       - name: Replace version name
         run: sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
 
-      - name: cat
-        run: cat pom.xml
+      # - name: cat
+      #   run: cat pom.xml
 
       - name: Build the Code
         run: ./mvnw package
@@ -41,6 +41,7 @@ jobs:
       # - name: Rename file with action number
       #   run: mv target/*.war target/b${{github.run_number}}.war
 
+  deploy-to-server:
       - name: Deploy the Build to Tomcat
         uses: mdallasanta/ssh-scp-deploy@v1.2.0
         with:
