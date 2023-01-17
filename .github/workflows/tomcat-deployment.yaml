@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-SERVICE_NAME: ${{ github.run_id }}
+  SERVICE_NAME: ${{ github.run_id }}
 
 jobs:
   build-springboot-app:
