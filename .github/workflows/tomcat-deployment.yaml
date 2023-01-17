@@ -33,7 +33,7 @@ jobs:
         run: ls -l target/*.war
 
       - name: Rename file with action number
-        run: mv target/*.war target/apiservice${{ github.run_number }}.war
+        run: mv target/*.war target/v${{ github.run_number }}.war
 
       - name: Deploy the Build to Tomcat
         uses: mdallasanta/ssh-scp-deploy@v1.2.0
