@@ -72,11 +72,13 @@ jobs:
     needs: deploy-to-server
     steps:
       - name: Send cURL request on port 8080
-        run: |
-              response = $(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)
+        id: response
+        run: echo "::set-output name=id::$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)"
       
       - name: Check response
-        if: ${{ response == github.run_number }}
-        run: ehco "Success!"
+        if: ${{ steps.response.outputs.id == github.run_number }}
+        run: |
+              echo "Success!"
+              echo ${{ steps.response.outputs.id }}
 
 
