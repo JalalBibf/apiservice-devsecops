@@ -73,12 +73,10 @@ jobs:
     steps:
       - name: Send cURL request on port 8080
         id: response
-        run: echo "::set-output name=id::$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)"
+        run: echo "response=$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_ENV
       
       - name: Check response
-        if: ${{ steps.response.outputs.id == github.run_number }}
+        if: ${{ env.response == github.run_number }}
         run: |
               echo "Success!"
-              echo ${{ steps.response.outputs.id }}
-
-
+              echo ${{ env.response }}
