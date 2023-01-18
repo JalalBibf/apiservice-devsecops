@@ -78,5 +78,5 @@ jobs:
               echo ${{ steps.responseStep.outputs.response }}
       - name: Check response
         run: |
-              grep '${{github.run_number}}' '${{steps.responseStep.outputs.response}}'
+              grep "${{github.run_number}}" "${{steps.responseStep.outputs.response}}"
               echo "Success!"
