@@ -73,8 +73,9 @@ jobs:
     steps:
       - name: Send cURL request on port 8080
         id: response
-        run: echo "response=$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_ENV
-      
+        run: |
+              echo "response=$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_ENV
+              echo ${{ env.response }}
       - name: Check response
         if: ${{ env.response == github.run_number }}
         run: |
