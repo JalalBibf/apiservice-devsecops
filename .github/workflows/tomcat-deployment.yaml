@@ -74,10 +74,9 @@ jobs:
       - name: Send cURL request on port 8080
         id: responseStep
         run: |
-              echo "response=$(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_OUTPUT
+              echo "response=$(curl http://${{secrets.HOST}}:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_OUTPUT
               echo ${{ steps.responseStep.outputs.response }}
       - name: Check response
-        if: ${{ steps.responseStep.outputs.response == github.run_number }}
         run: |
+              grep ${{github.run_number}} ${{steps.responseStep.outputs.response}}
               echo "Success!"
-              echo ${{ env.response }}
