@@ -27,8 +27,8 @@ jobs:
         run: chmod +x mvnw
 
       - name: Replace version name in pom.xml and Welcome.java
-        run: sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
         run: |
+              sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
               cd src/main/java/com/bbk/api/apiservice
               sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{github.run_number}}/g' Welcome.java
 
