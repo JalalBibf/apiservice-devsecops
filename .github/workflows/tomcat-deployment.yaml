@@ -26,8 +26,11 @@ jobs:
       - name: Fix the Permissions of mvnw command
         run: chmod +x mvnw
 
-      - name: Replace version name
+      - name: Replace version name in pom.xml and Welcome.java
         run: sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
+        run: |
+              cd src/main/java/com/bbk/api/apiservice
+              sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{github.run_number}}/g' Welcome.java
 
       - name: Build the Code
         run: ./mvnw package
@@ -63,4 +66,16 @@ jobs:
           post_upload: echo "executed after the upload!"
           ssh_options: -o StrictHostKeyChecking=no
           scp_options: -v
+  verify-version:
+    name: Check version by testing application endpoint
+    runs-on: ubuntu-latest
+    needs: deploy-to-server
+    steps:
+      - name: Send cURL request on port 8080
+        run: |
+              response = $(curl http://40.76.230.55:8080/apiservice-b${{github.run_number}}/version)
+      
+      - name: Check response
+        if: ${{ response == github.run_number }}
+
 
