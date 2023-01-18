@@ -11,4 +11,9 @@ public class Welcome {
 		return "Welcome to DevSecOps class";
 	}
 
+	@GetMapping("/version")
+	public String getVersion() {
+		return "REPLACETHISVALUEWITHGITHUBACTIONS";
+	}
+
 }
