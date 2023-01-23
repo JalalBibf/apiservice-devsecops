@@ -1,87 +1,87 @@
-name: Deploying Springboot(War) to Tomcat on Azure Windows Server
+# name: Deploying Springboot(War) to Tomcat on Azure Windows Server
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
-jobs:
-  build-springboot-app:
-    name: Build Springboot Application
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+# jobs:
+#   build-springboot-app:
+#     name: Build Springboot Application
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Install Java
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: '17'
+#           distribution: 'temurin'
 
-      - name: Verify Java Version
-        run: java -version
+#       - name: Verify Java Version
+#         run: java -version
 
-      - name: Download the Code
-        uses: actions/checkout@v3
+#       - name: Download the Code
+#         uses: actions/checkout@v3
 
-      - name: Fix the Permissions of mvnw command
-        run: chmod +x mvnw
+#       - name: Fix the Permissions of mvnw command
+#         run: chmod +x mvnw
 
-      - name: Replace version name in pom.xml and Welcome.java
-        run: |
-              sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
-              cd src/main/java/com/bbk/api/apiservice
-              sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{github.run_number}}/g' Welcome.java
+#       - name: Replace version name in pom.xml and Welcome.java
+#         run: |
+#               sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/b${{github.run_number}}/g' pom.xml
+#               cd src/main/java/com/bbk/api/apiservice
+#               sed -i 's/REPLACETHISVALUEWITHGITHUBACTIONS/${{github.run_number}}/g' Welcome.java
 
-      - name: Build the Code
-        run: ./mvnw package
+#       - name: Build the Code
+#         run: ./mvnw package
 
-      - name: Verify the Build is Created or Not
-        run: ls -l target/*.war
+#       - name: Verify the Build is Created or Not
+#         run: ls -l target/*.war
       
-      - name: upload war file to artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: warfile
-          path: target/*.war
+#       - name: upload war file to artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: warfile
+#           path: target/*.war
 
-  deploy-to-server:
-    name: Deploy application to server
-    runs-on: ubuntu-latest
-    needs: build-springboot-app
-    steps:
+#   deploy-to-server:
+#     name: Deploy application to server
+#     runs-on: ubuntu-latest
+#     needs: build-springboot-app
+#     steps:
 
-      - name: Download warfile
-        uses: actions/download-artifact@v3
+#       - name: Download warfile
+#         uses: actions/download-artifact@v3
 
-      - name: Deploy the Build to Tomcat
-        uses: mdallasanta/ssh-scp-deploy@v1.2.0
-        with:
-          local: warfile/*.war                                            
-          remote: 'C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps\'                                               
-          host: ${{secrets.HOST}}                                  
-          port: ${{secrets.PORT}}
-          user: ${{secrets.USER}}
-          password: ${{secrets.PASSWORD}}
-          pre_upload: echo "This will be executed before the upload!"
-          post_upload: echo "executed after the upload!"
-          ssh_options: -o StrictHostKeyChecking=no
-          scp_options: -v
-  verify-version:
-    name: Check version by testing application endpoint
-    runs-on: ubuntu-latest
-    needs: deploy-to-server
-    steps:
-      - name: Sleep for 10 seconds
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '10s'
+#       - name: Deploy the Build to Tomcat
+#         uses: mdallasanta/ssh-scp-deploy@v1.2.0
+#         with:
+#           local: warfile/*.war                                            
+#           remote: 'C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps\'                                               
+#           host: ${{secrets.HOST}}                                  
+#           port: ${{secrets.PORT}}
+#           user: ${{secrets.USER}}
+#           password: ${{secrets.PASSWORD}}
+#           pre_upload: echo "This will be executed before the upload!"
+#           post_upload: echo "executed after the upload!"
+#           ssh_options: -o StrictHostKeyChecking=no
+#           scp_options: -v
+#   verify-version:
+#     name: Check version by testing application endpoint
+#     runs-on: ubuntu-latest
+#     needs: deploy-to-server
+#     steps:
+#       - name: Sleep for 10 seconds
+#         uses: jakejarvis/wait-action@master
+#         with:
+#           time: '10s'
 
-      - name: Send cURL request on port 8080
-        id: responseStep
-        run: |
-              echo "response=$(curl http://${{secrets.HOST}}:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_OUTPUT
-              echo ${{ steps.responseStep.outputs.response }}
-      - name: Check response
-        run: |
-              echo "${{github.run_number}}" | grep "${{steps.responseStep.outputs.response}}"
-              echo "Success!"
+#       - name: Send cURL request on port 8080
+#         id: responseStep
+#         run: |
+#               echo "response=$(curl http://${{secrets.HOST}}:8080/apiservice-b${{github.run_number}}/version)" >> $GITHUB_OUTPUT
+#               echo ${{ steps.responseStep.outputs.response }}
+#       - name: Check response
+#         run: |
+#               echo "${{github.run_number}}" | grep "${{steps.responseStep.outputs.response}}"
+#               echo "Success!"
